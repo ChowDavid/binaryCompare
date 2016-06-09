@@ -17,13 +17,13 @@ public class FileCompare {
 		if (!target.exists() || target.isFile()) return null;
 		System.out.println("SOURCE_UNPACKED="+source.getAbsolutePath());
 		System.out.println("PRODUCTION_UNPACKED="+target.getAbsolutePath());
-		CompareResult result1=compare("SOURCE vs PRODUCTION",source,target);
-		CompareResult result2=compare("PRODUCTION vs SOURCE",target,source);
+		CompareResult result1=compare("SOURCE vs PRODUCTION",source,target,true);
+		CompareResult result2=compare("PRODUCTION vs SOURCE",target,source,false);
 		CompareResult result=new CompareResult(result1.getNotFoundCount()+result2.getNotFoundCount(),result1.getDifferentCount(),result1.getPassCount());
 		return result;
 	}
 
-	private static CompareResult compare(String message, File source, File target) throws IOException {
+	private static CompareResult compare(String message, File source, File target, boolean checkDifferent) throws IOException {
 		//System.out.println("compare ["+source.getAbsolutePath()+"]["+target.getAbsolutePath()+"]");
 		CompareResult result=new CompareResult();
 		SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd HH:mm");
@@ -39,14 +39,14 @@ public class FileCompare {
 			if (!targetFile.exists()){
 				System.out.println("ERROR the file does not exists ["+message+"] "+targetFile.getAbsolutePath().substring(target.getAbsolutePath().length()+1));
 				result.notFound();
-			} else if (!customCompare(sourceFile,targetFile)){
-				//System.out.println("WARNING source and target are different ["+message+"]");
+			} else if (checkDifferent){
+				if (!customCompare(sourceFile,targetFile)){
 				System.out.println("WARNING source and target are different ["+message+"] ["+sdf.format(new Date(sourceFile.lastModified()))+"] FILE="+sourceFile.getAbsolutePath().substring(source.getAbsolutePath().length()+1));
-				//System.out.println("WARNING source and target are different ["+message+"] TARGET="+targetFile.getAbsolutePath().substring(target.getAbsolutePath().length()+1));
 				result.differentFound();
-			} else {
-				System.out.println("PASSED ["+message+"]  FILE="+sourceFile.getAbsolutePath().substring(source.getAbsolutePath().length()+1));
-				result.passFound();
+				} else {
+					System.out.println("PASSED ["+message+"]  FILE="+sourceFile.getAbsolutePath().substring(source.getAbsolutePath().length()+1));
+					result.passFound();
+				}
 			}
 		}
 		return result;
@@ -54,8 +54,19 @@ public class FileCompare {
 	}
 
 	private static boolean customCompare(File sourceFile, File targetFile) throws IOException {
-		if (sourceFile.getName().endsWith("class")){
-			return FileUtils.contentEquals(sourceFile, targetFile);
+		if (sourceFile.getName().endsWith(".class")){
+			JavaMetaData sourceData=new JavaMetaData(sourceFile);
+			JavaMetaData targetData=new JavaMetaData(targetFile);
+			if (!sourceData.isSuccess() || !targetData.isSuccess()){
+				return FileUtils.contentEquals(sourceFile, targetFile);
+			} else {
+				if (!sourceData.getMd5Hash().equals(targetData.getMd5Hash()) || !sourceData.getVersion().equals(targetData.getVersion())){
+					System.out.println("WARNING MetalData not match ONE->["+sourceData.getMd5Hash()+"]["+sourceData.getVersion()+"]");
+					System.out.println("WARNING MetalData not match TWO->["+targetData.getMd5Hash()+"]["+targetData.getVersion()+"]");
+					return false;
+				} 
+				return true;
+			}
 		} else {
 			List<String> sLines=FileUtils.readLines(sourceFile);
 			List<String> tLines=FileUtils.readLines(targetFile);
@@ -72,6 +83,8 @@ public class FileCompare {
 			return true;
 		}
 	}
+	
+
 
 	private static File getTargetFile(File sourceFile, String sourceName, String targetName) {
 		//System.out.println("getTargetFile ["+sourceFile.getAbsolutePath()+"]["+sourceName+"]["+targetName+"]");
