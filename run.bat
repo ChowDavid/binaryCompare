@@ -1,0 +1,1 @@
+java -jar c:\ProductionSync\binaryCompare.jar %1 %2
