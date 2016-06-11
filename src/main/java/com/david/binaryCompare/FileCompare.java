@@ -60,11 +60,15 @@ public class FileCompare {
 			if (!sourceData.isSuccess() || !targetData.isSuccess()){
 				return FileUtils.contentEquals(sourceFile, targetFile);
 			} else {
-				if (!sourceData.getMd5Hash().equals(targetData.getMd5Hash()) || !sourceData.getVersion().equals(targetData.getVersion())){
-					System.out.println("WARNING MetalData not match ONE->["+sourceData.getMd5Hash()+"]["+sourceData.getVersion()+"]");
-					System.out.println("WARNING MetalData not match TWO->["+targetData.getMd5Hash()+"]["+targetData.getVersion()+"]");
-					return false;
+				if (!sourceData.getVersion().equals(targetData.getVersion())){
+					System.out.println("WARNING MetalData not match ONE->["+sourceData.getVersion()+"]");
+					System.out.println("WARNING MetalData not match TWO->["+targetData.getVersion()+"]");
 				} 
+				if (!FileUtils.contentEquals(sourceData.getJavaFile(), targetData.getJavaFile())){
+					System.out.println("ERROR Java decompiled file not matched ONE->"+sourceData.getJavaFile().getAbsolutePath());
+					System.out.println("ERROR Java decompiled file not matched TWO->"+targetData.getJavaFile().getAbsolutePath());
+					return false;
+				}
 				return true;
 			}
 		} else {
