@@ -29,31 +29,13 @@ public class FileBreaker {
 	}
 	
 	public static void unPackage(File tarFile, File directory) throws IOException {
-		//System.out.println("unPackage ["+tarFile.getAbsolutePath()+"]->["+directory.getAbsolutePath()+"]");
+		System.out.println("Un-Pack ["+tarFile.getAbsolutePath()+"]->["+directory.getAbsolutePath()+"]");
 		if (directory.exists()){
 			directory.delete();
 		}
 		if (tarFile.isDirectory()){
 			File oneLevelDeep=new File(directory,tarFile.getName());
-			
 			FileUtils.copyDirectory(tarFile, oneLevelDeep);
-			/*
-			for (File subFile:tarFile.listFiles()){
-				if (!isJavaPackage(subFile)){
-					if (subFile.isFile()){
-						FileUtils.copyFile(subFile, new File(directory,subFile.getName()));
-					} 
-					if (subFile.isDirectory()){
-						FileUtils.copyDirectory(subFile, new File(directory,subFile.getName()));
-					}
-					
-				} else {
-					File newFolder=new File(directory,subFile.getName());
-					unJar(subFile,newFolder);
-					
-				}
-			}
-			*/
 		} else {
 			if (!isJavaPackage(tarFile)){
 				if (tarFile.isFile()){
@@ -98,11 +80,11 @@ public class FileBreaker {
 	public static List<String> unJar(File tarFile, File directory) throws IOException {
 	    List<String> result = new ArrayList<String>();
 	    InputStream inputStream = new FileInputStream(tarFile);
-	    ZipArchiveInputStream in = new ZipArchiveInputStream(inputStream);
-	    ZipArchiveEntry entry = in.getNextZipEntry();
+	    JarArchiveInputStream in = new JarArchiveInputStream(inputStream);
+	    JarArchiveEntry entry = in.getNextJarEntry();
 	    while (entry != null) {
 	        if (entry.isDirectory()) {
-	            entry = in.getNextZipEntry();
+	            entry = in.getNextJarEntry();
 	            continue;
 	        }
 	        File curfile = new File(directory, entry.getName()); 
@@ -120,7 +102,7 @@ public class FileBreaker {
 	        
 	        out.close();
 	        result.add(entry.getName());
-	        entry = in.getNextZipEntry();
+	        entry = in.getNextJarEntry();
 	    }
 	    in.close();
 	    return result;
