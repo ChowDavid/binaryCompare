@@ -29,7 +29,7 @@ public class FileBreaker {
 	}
 	
 	public static void unPackage(File tarFile, File directory) throws IOException {
-		System.out.println("Un-Pack ["+tarFile.getAbsolutePath()+"]->["+directory.getAbsolutePath()+"]");
+		Output.print("Un-Pack ["+tarFile.getAbsolutePath()+"]->["+directory.getAbsolutePath()+"]");
 		if (directory.exists()){
 			directory.delete();
 		}
@@ -47,7 +47,7 @@ public class FileBreaker {
 				
 			} else {
 				File newFolder=new File(directory,tarFile.getName());
-				System.out.println(newFolder.getAbsolutePath());
+				Output.print(newFolder.getAbsolutePath());
 				unJar(tarFile,newFolder);
 				
 			}
@@ -88,8 +88,8 @@ public class FileBreaker {
 	            continue;
 	        }
 	        File curfile = new File(directory, entry.getName()); 
-	        //System.out.println("getLastModifiedDate="+entry.getLastModifiedDate());
-	        //System.out.println("getTime="+new Date(entry.getTime()));
+	        //Output.print("getLastModifiedDate="+entry.getLastModifiedDate());
+	        //Output.print("getTime="+new Date(entry.getTime()));
 	  
 	        
 	        curfile.setLastModified(entry.getLastModifiedDate().getTime());

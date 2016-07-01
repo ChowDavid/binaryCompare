@@ -4,6 +4,7 @@
 
 	<groupId>com.david</groupId>
 	<artifactId>binaryCompare</artifactId>
+	<version>1.0.0-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
 	<name>binaryCompare</name>
@@ -17,7 +18,7 @@
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>3.8.1</version>
+			<version>4.12</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -47,7 +48,7 @@
 
 	</dependencies>
 	<build>
-		<finalName>binary Compare</finalName>
+		<finalName>binaryCompare</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -57,8 +58,22 @@
 					<target>1.7</target>
 				</configuration>
 			</plugin>
+			<plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<version>2.6</version>
+				<configuration>
+					<descriptorRefs>
+						<descriptorRef>jar-with-dependencies</descriptorRef>
+					</descriptorRefs>
+					<archive>
+						<manifest>
+							<mainClass>com.david.binaryCompare.AppMain</mainClass>
+						</manifest>
+					</archive>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
 
-	<version>1.0.0</version>
+
 </project>
