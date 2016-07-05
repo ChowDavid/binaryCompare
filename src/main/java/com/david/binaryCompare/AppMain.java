@@ -7,6 +7,8 @@ import java.util.Set;
 
 import org.apache.commons.io.IOUtils;
 
+import com.strobel.decompiler.DecompilerDriver;
+
 /**
  * Hello world!
  *
@@ -37,8 +39,6 @@ public class AppMain {
 
 		FileBreaker.unPackage(sourceFile, sourceTemp);
 		FileBreaker.unPackage(targetFile, targetTemp);
-		//Decompile.folder(sourceTemp);
-		//Decompile.folder(targetTemp);
 		CompareResult sourceResult = new CompareResult();
 		CompareResult targetResult = new CompareResult();
 		FileCompare.directory(sourceTemp, targetTemp, sourceResult, targetResult);

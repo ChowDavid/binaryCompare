@@ -35,14 +35,14 @@ public class FileBreaker {
 		}
 		if (tarFile.isDirectory()){
 			File oneLevelDeep=new File(directory,tarFile.getName());
-			FileUtils.copyDirectory(tarFile, oneLevelDeep);
+			FileUtils.copyDirectory(tarFile, oneLevelDeep,true);
 		} else {
 			if (!isJavaPackage(tarFile)){
 				if (tarFile.isFile()){
-					FileUtils.copyFile(tarFile, new File(directory,tarFile.getName()));
+					FileUtils.copyFile(tarFile, new File(directory,tarFile.getName()),true);
 				} 
 				if (tarFile.isDirectory()){
-					FileUtils.copyDirectory(tarFile, new File(directory,tarFile.getName()));
+					FileUtils.copyDirectory(tarFile, new File(directory,tarFile.getName()),true);
 				}
 				
 			} else {
@@ -90,17 +90,14 @@ public class FileBreaker {
 	        File curfile = new File(directory, entry.getName()); 
 	        //Output.print("getLastModifiedDate="+entry.getLastModifiedDate());
 	        //Output.print("getTime="+new Date(entry.getTime()));
-	  
-	        
-	        curfile.setLastModified(entry.getLastModifiedDate().getTime());
 	        File parent = curfile.getParentFile();
 	        if (!parent.exists()) {
 	            parent.mkdirs();
 	        }
 	        OutputStream out = new FileOutputStream(curfile);
 	        IOUtils.copy(in, out);
-	        
 	        out.close();
+	        curfile.setLastModified(entry.getLastModifiedDate().getTime());
 	        result.add(entry.getName());
 	        entry = in.getNextJarEntry();
 	    }

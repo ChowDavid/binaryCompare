@@ -88,6 +88,10 @@ public class JavaMetaData {
 			DecompilerDriver.main(new String[]{classFileName});
 			System.setOut(out);
 			System.setErr(err);
+			javaFile.setLastModified(classFile.lastModified());
+			
+			
+		
 			
 		} catch (FileNotFoundException e) {
 			System.out.println("Required file not found " + classFile.getAbsolutePath());
